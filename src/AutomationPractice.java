@@ -23,7 +23,7 @@ public class AutomationPractice {
         over.moveToElement(product).perform();
         WebElement locator = product.findElement(By.xpath("div//a[contains(@class,'ajax_add_to_cart_button')]"));
         locator.click();
-        WebDriver.Timeouts timeouts = driver.manage().timeouts().implicitlyWait(5000000, TimeUnit.MICROSECONDS);
+        Thread.sleep(5000);
         driver.close();
 
 

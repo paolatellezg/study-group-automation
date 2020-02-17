@@ -1,4 +1,5 @@
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -14,11 +15,16 @@ public class AutomationPractice {
         WebDriver driver=new ChromeDriver();
         driver.navigate().to("http://automationpractice.com/index.php?");
         driver.manage().window().maximize();
-        WebElement product= driver.findElement(By.xpath("//ul[@id='homefeatured']//div[@class='product-container'][1]"));
+       JavascriptExecutor js = (JavascriptExecutor) driver;
+        js.executeScript("window.scrollTo(0,document.body.scrollHeight)");
+       //WebElement product= driver.findElement(By.xpath("//ul[@id='homefeatured']//div[@class='product-container'][1]"));
+        WebElement product= driver.findElement(By.xpath("//ul[@id='homefeatured']//li[contains(@class,'ajax_block_product')][4]"));
         Actions over=new Actions(driver);
         over.moveToElement(product).perform();
-        By locator = By.xpath("//a[@title='Add to cart']");
-        driver.click(locator);
+        WebElement locator = product.findElement(By.xpath("div//a[contains(@class,'ajax_add_to_cart_button')]"));
+        locator.click();
+        WebDriver.Timeouts timeouts = driver.manage().timeouts().implicitlyWait(5000000, TimeUnit.MICROSECONDS);
+        driver.close();
 
 
 

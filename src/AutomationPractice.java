@@ -88,7 +88,7 @@ public class AutomationPractice {
     btnContinueShopping.click();
     Thread.sleep(3000);
 
-  //driver.close();
+  driver.close();
 
     }
 

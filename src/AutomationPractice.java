@@ -21,75 +21,78 @@ public class AutomationPractice {
         return driver;
     }
 
-    class Product{
+    private static class Product{
 
         //Properties
        private boolean mouseOverStatus;
-        private WebElement btnAddToCart, btnQuickView, btnMore, imgProductPhoto;
+        private WebElement btnAddToCart, btnQuickView, btnMore, imgProductPhoto, product;
         private float value;
-        private String productName, productCategory;
+        private String tabName;
+        private int productIndex;
+        private WebDriver driver;
+        private Actions over;
 
-
-        Product(){
-
+        public Product(WebDriver driver, String tabName, int productIndex){
+        this.tabName=tabName;
+        this.productIndex=productIndex;
+        this.driver=driver;
+        this.over=new Actions(driver);
         }
-
 
         //Actions or methods
-       public static SelectProduct(int productIndex){
+        public void selectTab (String tabName) throws InterruptedException {//definir tabname en algún lado
+            if(tabName=="Popular") {
+                WebElement popularTab = this.driver.findElement(By.xpath("//*[@class=\"homefeatured\"]"));
+                popularTab.click();
+                Thread.sleep(3000);
+            }else {
+                WebElement bestSellerTab = this.driver.findElement(By.xpath("//ul[@id='home-page-tabs']//li[2]//a[contains(@class,'blockbestsellers')]"));
+                bestSellerTab.click();
+                Thread.sleep(3000);
+            }
+        }
 
+       public WebElement overProduct(int productIndex, String tabName){
+            WebElement product;
+            if(tabName=="Popular") {
+                product = this.driver.findElement(By.xpath("//ul[@id='homefeatured']//li[contains(@class,'ajax_block_product')]["+productIndex+"]"));
+                }
+            else {
+                product = this.driver.findElement(By.xpath("//ul[@id='blockbestsellers']//li[contains(@class,'ajax_block_product')]["+productIndex+"]"));
+                }
+           this.over.moveToElement(product).perform();
+            return product;
        }
-        public static addProduct(int productIndex){
+        public void addProduct(WebElement product) throws InterruptedException {
 
+                WebElement addToCartButton = product.findElement(By.xpath("div//a[contains(@class,'ajax_add_to_cart_button')]"));
+                addToCartButton.click();
+                Thread.sleep(3000);
+        }
+        public void continueShopping() throws InterruptedException {
+            WebElement btnContinueShopping=this.driver.findElement(By.xpath("//div[@id='layer_cart']//div[@class='button-container']//span[contains(@class,'continue')]"));
+            btnContinueShopping.click();
+            Thread.sleep(3000);
+        }
+        public void addProductToCart() throws InterruptedException {
+            this.selectTab(this.tabName);
+            WebElement product=this.overProduct(this.productIndex,this.tabName);
+            this.addProduct(product);
+            this.continueShopping();
         }
     }
+
     public static void main(String[] args) throws Exception{
 
     WebDriver driver= configurationDriver("http://automationpractice.com/index.php?");
-    Actions over=new Actions(driver);
+    Product dress1=new Product(driver,"Popular", 3);
+    Product dress2=new Product(driver, "BestSeller", 7);
+    Product dress3=new Product(driver, "BestSeller", 4);
 
-    WebElement popularTab=driver.findElement(By.xpath("//*[@class=\"homefeatured\"]"));
-    popularTab.click();
-    Thread.sleep(3000);
-    WebElement productPop= driver.findElement(By.xpath("//ul[@id='homefeatured']//li[contains(@class,'ajax_block_product')][4]"));
-    over.moveToElement(productPop).perform();
-    productPop.click();
-    WebElement addToCartButton = productPop.findElement(By.xpath("div//a[contains(@class,'ajax_add_to_cart_button')]"));
-    addToCartButton.click();
-    Thread.sleep(3000);
-    WebElement btnContinueShopping=driver.findElement(By.xpath("//div[@id='layer_cart']//div[@class='button-container']//span[contains(@class,'continue')]"));
-    btnContinueShopping.click();
-    Thread.sleep(3000);
-
-
-    WebElement bestSellerTab=driver.findElement(By.xpath("//ul[@id='home-page-tabs']//li[2]//a[contains(@class,'blockbestsellers')]"));
-    bestSellerTab.click();
-    Thread.sleep(3000);
-    WebElement productBS=driver.findElement(By.xpath("//ul[@id='blockbestsellers']//li[contains(@class,'ajax_block_product')][3]"));
-    productBS.click();
-    over.moveToElement(productBS).perform();
-    WebElement bestSellerAddCart=productBS.findElement(By.xpath("div//a[contains(@class,'ajax_add_to_cart_button')]"));
-    bestSellerAddCart.click();
-    Thread.sleep(3000);
-    btnContinueShopping=driver.findElement(By.xpath("//div[@id='layer_cart']//div[@class='button-container']//span[contains(@class,'continue')]"));
-    btnContinueShopping.click();
-    Thread.sleep(3000);
-
-    WebElement bestSellerTab=driver.findElement(By.xpath("//ul[@id='home-page-tabs']//li[2]//a[contains(@class,'blockbestsellers')]"));
-    bestSellerTab.click();
-    Thread.sleep(3000);
-    WebElement productBS=driver.findElement(By.xpath("//ul[@id='blockbestsellers']//li[contains(@class,'ajax_block_product')][7]"));
-    productBS.click();
-    over.moveToElement(productBS).perform();
-    WebElement bestSellerAddCart=productBS.findElement(By.xpath("div//a[contains(@class,'ajax_add_to_cart_button')]"));
-    bestSellerAddCart.click();
-    Thread.sleep(3000);
-    btnContinueShopping=driver.findElement(By.xpath("//div[@id='layer_cart']//div[@class='button-container']//span[contains(@class,'continue')]"));
-    btnContinueShopping.click();
-    Thread.sleep(3000);
-
-  driver.close();
-
+    dress1.addProductToCart();
+    dress2.addProductToCart();
+    dress3.addProductToCart();
+    driver.close();
     }
 
 
